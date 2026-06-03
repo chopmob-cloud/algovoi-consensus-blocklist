@@ -1,0 +1,61 @@
+{
+  "name": "@algovoi/consensus-blocklist",
+  "version": "0.1.0",
+  "description": "4-of-N on-chain consensus wallet blocklist for Algorand and VOI",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types":   "./dist/index.d.ts",
+      "import":  "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./gateway": {
+      "types":   "./dist/gateway.d.ts",
+      "import":  "./dist/gateway.js",
+      "require": "./dist/gateway.cjs"
+    },
+    "./client": {
+      "types":   "./dist/client.d.ts",
+      "import":  "./dist/client.js",
+      "require": "./dist/client.cjs"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build":       "tsup",
+    "dev":         "tsup --watch",
+    "test":        "vitest run",
+    "test:watch":  "vitest",
+    "typecheck":   "tsc --noEmit",
+    "ci":          "npm run typecheck && npm run test && npm run build"
+  },
+  "keywords": [
+    "algorand", "voi", "blockchain", "consensus", "blocklist",
+    "avm", "algopy", "smart-contract", "compliance", "algovoi"
+  ],
+  "author": "AlgoVoi <hello@algovoi.co.uk>",
+  "homepage": "https://github.com/chopmob-cloud/algovoi-consensus-blocklist",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chopmob-cloud/algovoi-consensus-blocklist.git"
+  },
+  "engines": { "node": ">=18" },
+  "peerDependencies": {
+    "algosdk": ">=2.7"
+  },
+  "peerDependenciesMeta": {
+    "algosdk": { "optional": true }
+  },
+  "devDependencies": {
+    "@types/node":  "^20.11.0",
+    "algosdk":      "^2.11.0",
+    "tsup":         "^8.0.0",
+    "typescript":   "^5.3.0",
+    "vitest":       "^1.2.0"
+  },
+  "publishConfig": { "access": "public" }
+}

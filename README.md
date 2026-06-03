@@ -38,7 +38,20 @@ contracts/blocklist_consensus/
         test_blocklist.py        # algopy unit tests
         test_gateway_service.py  # gateway service mocked tests
 
-on_chain_blocklist.py    # async gateway query service
+on_chain_blocklist.py    # async gateway query service (Python)
+
+src/                     # TypeScript package
+    types.ts             # shared types
+    contract.ts          # ABI methods + box key helpers
+    client.ts            # NodeRunnerClient + OwnerClient
+    gateway.ts           # OnChainBlocklistGateway (fetch-based, no algosdk dep)
+    index.ts             # public exports
+
+tests/
+    gateway.test.ts      # vitest tests
+
+package.json
+tsconfig.json
 ```
 
 ---
@@ -178,7 +191,62 @@ if blocked:
 
 ---
 
-## Running the tests
+## TypeScript
+
+### Install
+
+```bash
+npm install @algovoi/consensus-blocklist
+# algosdk is only required for NodeRunnerClient / OwnerClient
+npm install algosdk
+```
+
+### Gateway query (no algosdk required)
+
+```typescript
+import { OnChainBlocklistGateway } from "@algovoi/consensus-blocklist/gateway";
+
+const gateway = new OnChainBlocklistGateway({
+  algorand: { appId: Number(process.env.BLOCKLIST_APP_ID) },
+  voi:      { appId: Number(process.env.BLOCKLIST_VOI_APP_ID) },
+  cacheTtlMs: 30_000,
+});
+
+const blocked = await gateway.isBlocked("WALLETADDRESS...");
+if (blocked) throw new Error("wallet_blocked");
+```
+
+### Node runner voting
+
+```typescript
+import { NodeRunnerClient } from "@algovoi/consensus-blocklist/client";
+import algosdk from "algosdk";
+
+const { sk } = algosdk.mnemonicToSecretKey(process.env.NODE_RUNNER_MNEMONIC!);
+
+const runner = new NodeRunnerClient({
+  appId:     Number(process.env.BLOCKLIST_APP_ID),
+  secretKey: sk,
+  network:   "algorand",
+});
+
+const result = await runner.voteBlock("WALLETADDRESS...");
+console.log(result);
+// { txId: "...", thresholdReached: false, network: "algorand" }
+```
+
+### Build and test
+
+```bash
+npm ci
+npm test          # vitest
+npm run typecheck # tsc --noEmit
+npm run build     # tsup → dist/
+```
+
+---
+
+## Running the Python tests
 
 ```bash
 # Contract unit tests (algopy testing framework)
